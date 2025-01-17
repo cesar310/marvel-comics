@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Marvel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="https://img.icons8.com/?size=100&id=rPcdh4Z53kzY&format=png&color=000000">
+</head>
+<body>
+    <nav class="nav-bar">
+        <h1>Catálogo de Cómics Marvel</h1>
+        <div class="catalog-tabs">
+            <button class="tab-btn" onclick="showTab('catalog')">Catálogo</button>
+            <button class="tab-btn" onclick="showTab('favorites')">Favoritos</button>
+        </div>
+        <div class="user-info">
+            <span>Bienvenido, {{ session['username'] }}</span>
+            <a href="#" class="logout-btn" onclick="showLogoutConfirmation(event)">Cerrar sesión</a>
+        </div>
+    </nav>
+    
+    <div>
+        <div id="catalog-tab" class="tab-content">
+            <div class="comics-grid">
+                {% for index, comic in data.iterrows() %}
+                <div class="comic-card" 
+                     data-comic-id="{{ comic.id }}" 
+                     data-description="{{ comic.description|default('No disponible', true)|replace("'", "'")|replace('"', '&quot;')|e }}">
+                    <img src="{{ comic.thumbnail.path }}/portrait_uncanny.{{ comic.thumbnail.extension }}" 
+                         alt="{{ comic.title|e }}"
+                         class="comic-image">
+                    <div class="comic-title">
+                        <h3>{{ comic.title|e }}</h3>
+                    </div>
+                    <div class="comic-hover-info">
+                        <div class="comic-hover-details">
+                            <p><strong>Páginas:</strong> {{ comic.pageCount or 'No disponible' }}</p>
+                            <p><strong>Precio:</strong> {% if comic.prices[0].price %} ${{ comic.prices[0].price }} {% else %} No disponible {% endif %}</p>
+                            <button class="favorite-btn {% if comic.id in favorite_ids %}active{% endif %}"
+                                    onclick="handleFavoriteClick(event, this, {{ comic.id }}, 
+                                            '{{ comic.title|replace("'", "\\'")|e }}', 
+                                            {{ comic.pageCount or 0 }}, 
+                                            {{ comic.prices[0].price or 0 }}, 
+                                            '{{ comic.thumbnail.path }}', 
+                                            '{{ comic.thumbnail.extension }}',
+                                            '{{ comic.description|default('No disponible', true)|replace("'", "\\'")|replace('"', '\\"')|e }}')">
+                                {% if comic.id in favorite_ids %}
+                                    ★ Quitar de favoritos
+                                {% else %}
+                                    ☆ Agregar a favoritos
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div id="favorites-tab" class="tab-content" style="display: none;">
+            <div class="comics-grid">
+                {% for favorite in favorites %}
+                <div class="comic-card" 
+                     data-comic-id="{{ favorite.comic_id }}"
+                     data-description="{{ favorite.description|default('No disponible', true)|replace("'", "'")|replace('"', '&quot;')|e }}">
+                    <img src="{{ favorite.thumbnail_path }}/portrait_uncanny.{{ favorite.thumbnail_extension }}" 
+                         alt="{{ favorite.title|e }}"
+                         class="comic-image">
+                    <div class="comic-title">
+                        <h3>{{ favorite.title|e }}</h3>
+                    </div>
+                    <div class="comic-hover-info">
+                        <div class="comic-hover-details">
+                            <p><strong>Páginas:</strong> {{ favorite.pageCount or 'No disponible' }}</p>
+                            <p><strong>Precio:</strong> {% if favorite.price %} ${{ favorite.price }} {% else %} No disponible {% endif %}</p>
+                            <button class="favorite-btn active"
+                                    onclick="handleFavoriteClick(event, this, {{ favorite.comic_id }}, 
+                                            '{{ favorite.title|replace("'", "\\'")|e }}', 
+                                            {{ favorite.pageCount or 0 }}, 
+                                            {{ favorite.price or 0 }}, 
+                                            '{{ favorite.thumbnail_path }}', 
+                                            '{{ favorite.thumbnail_extension }}',
+                                            '{{ favorite.description|default('No disponible', true)|replace("'", "\\'")|replace('"', '\\"')|e }}')">
+                                ★ Quitar de favoritos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirmar acción</h2>
+            <p>¿Estás seguro de que deseas eliminar este cómic de favoritos?</p>
+            <div class="modal-buttons">
+                <button id="confirmDelete" class="modal-btn confirm">Eliminar</button>
+                <button id="cancelDelete" class="modal-btn cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirmar cierre de sesión</h2>
+            <p>¿Estás seguro de que deseas cerrar sesión?</p>
+            <div class="modal-buttons">
+                <button id="confirmLogout" class="modal-btn confirm">Cerrar sesión</button>
+                <button id="cancelLogout" class="modal-btn cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="comicModal" class="modal">
+        <div class="modal-content"></div>
+    </div>
+
+    <div id="loadingIndicator" class="loading-indicator">
+        <div class="comics-loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <p>Cargando más cómics...</p>
+    </div>
+    
+    <script>
+        const comicsData = JSON.parse('{{ data.to_json(orient="records") | safe }}');
+    </script>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Docker
+Dockerfile
+.dockerignore
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# DB
+instance/
