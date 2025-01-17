@@ -62,4 +62,6 @@ MARVEL_PRIVATE_KEY=your_marvel_private_key
 
 ### Acceder a la aplicación
 
-Abre tu navegador web y navega a `http://localhost:5000` para acceder a la aplicación.
+Abre tu navegador web y navega a `http://localhost:5000` para acceder a la aplicación. Se deberá observar la siguiente página de inicio de sesión, si no observa las imágenes de la derecha revise la configuración del archivo `.env` ya que es un error con las API Keys, en caso de este error se necesita volver a construir la imagen de docker y ejecutar el contenedor.
+
+![alt text](images/login.png)
