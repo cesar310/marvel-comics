@@ -24,27 +24,19 @@ cd marvel-comics
 
 ### Configurar Variables de Entorno
 
-Crear archivo 
-
-.env
-
- en la raíz:
+Crear archivo `.env` en la raíz con el siguiente contrenido:
 
 ```env
 SECRET_KEY=your_secret_key
 DATABASE_URL=sqlite:///marvel.db
-MARVEL_API_KEY=your_marvel_api_key
+MARVEL_API_KEY=your_marvel_public_key
 MARVEL_PRIVATE_KEY=your_marvel_private_key
 ```
 
 #### API Marvel
 1. Registrarse en [Marvel Developer Portal](https://developer.marvel.com/)
 2. Obtener API Keys
-3. Actualizar 
-
-.env
-
- con las claves
+3. Actualizar `.env` en los campos `your_marvel_public_key` y `your_marvel_private_key`.
 
 ### Construir y ejecutar la imagen de Docker
 
