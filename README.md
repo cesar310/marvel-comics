@@ -24,7 +24,7 @@ cd marvel-comics
 
 ### Configurar Variables de Entorno
 
-Crear archivo `.env` en la raíz con el siguiente contenido:
+Crear archivo con el nombre `.env` en la raíz con el siguiente contenido:
 
 ```env
 SECRET_KEY=your_secret_key
